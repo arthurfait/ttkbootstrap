@@ -18,6 +18,7 @@ try:
 except:
     USER_THEMES = {}
 
+
 class Colors:
     """A class that defines the color scheme for a theme as well as
     provides several static methods for manipulating colors.
@@ -158,7 +159,7 @@ class Colors:
     @staticmethod
     def make_transparent(alpha, foreground, background='#ffffff'):
         """Simulate color transparency.
-        
+
         Parameters:
 
             alpha (float):
@@ -173,15 +174,15 @@ class Colors:
         Returns:
 
             str:
-                A hexadecimal color representing the "transparent" 
-                version of the foreground color against the background 
+                A hexadecimal color representing the "transparent"
+                version of the foreground color against the background
                 color.
         """
         fg = ImageColor.getrgb(foreground)
         bg = ImageColor.getrgb(background)
         rgb_float = [alpha * c1 + (1 - alpha) * c2 for (c1, c2) in zip(fg, bg)]
         rgb_int = [int(x) for x in rgb_float]
-        return '#{:02x}{:02x}{:02x}'.format(*rgb_int)    
+        return '#{:02x}{:02x}{:02x}'.format(*rgb_int)
 
     @staticmethod
     def rgb_to_hsv(r, g, b):
@@ -483,6 +484,7 @@ class Style(ttk.Style):
         self._style_registry = set()  # all styles used
         self._theme_styles = {}  # styles used in theme
         self._theme_names = set()
+        self._mode_classic = False
         self._load_themes()
         super().__init__()
 
@@ -540,6 +542,9 @@ class Style(ttk.Style):
                 A list of theme names.
         """
         return list(self._theme_definitions.keys())
+
+    def enable_classic(self, enable=True):
+        self._mode_classic = enable
 
     def register_theme(self, definition):
         """Register a theme definition for use by the `Style`
@@ -1040,7 +1045,7 @@ class StyleBuilderTK:
             relief=tk.FLAT,
             padx=5,
             pady=5,
-            #font="TkDefaultFont",
+            # font="TkDefaultFont",
         )
 
 
@@ -2479,7 +2484,6 @@ class StyleBuilderTTK:
             header_style = f"{colorname}.{STYLE}.Heading"
             hover = Colors.update_hsv(background, vd=0.1)
 
-
         # treeview header
         self.style._build_configure(
             header_style,
@@ -2716,10 +2720,12 @@ class StyleBuilderTTK:
             background = self.colors.get(colorname)
 
         bordercolor = background
-        disabled_bg = Colors.make_transparent(0.10, self.colors.fg, self.colors.bg)
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)
+        disabled_bg = Colors.make_transparent(
+            0.10, self.colors.fg, self.colors.bg)
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
         pressed = Colors.make_transparent(0.80, background, self.colors.bg)
-        hover = Colors.make_transparent(0.90, background, self.colors.bg)        
+        hover = Colors.make_transparent(0.90, background, self.colors.bg)
 
         self.style._build_configure(
             ttkstyle,
@@ -2767,7 +2773,8 @@ class StyleBuilderTTK:
         """
         STYLE = "Outline.TButton"
 
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
 
         if any([colorname == DEFAULT, colorname == ""]):
             ttkstyle = STYLE
@@ -2850,7 +2857,8 @@ class StyleBuilderTTK:
             foreground = self.colors.get(colorname)
             ttkstyle = f"{colorname}.{STYLE}"
 
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)  
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
 
         self.style._build_configure(
             ttkstyle,
@@ -2925,9 +2933,12 @@ class StyleBuilderTTK:
         on_indicator = self.colors.selectfg
         on_fill = prime_color
         off_fill = self.colors.bg
-        disabled_fg = Colors.make_transparent(0.3, self.colors.fg, self.colors.bg)  
-        off_border = Colors.make_transparent(0.4, self.colors.fg, self.colors.bg)
-        off_indicator = Colors.make_transparent(0.4, self.colors.fg, self.colors.bg)     
+        disabled_fg = Colors.make_transparent(
+            0.3, self.colors.fg, self.colors.bg)
+        off_border = Colors.make_transparent(
+            0.4, self.colors.fg, self.colors.bg)
+        off_indicator = Colors.make_transparent(
+            0.4, self.colors.fg, self.colors.bg)
 
         # override defaults for light and dark colors
         if colorname == LIGHT:
@@ -2980,10 +2991,10 @@ class StyleBuilderTTK:
         )
         draw.rectangle([18, 18, 110, 110], fill=disabled_fg)
         _on_disabled = toggle_on_disabled.transpose(Image.ROTATE_180)
-        on_dis_img = ImageTk.PhotoImage(_on_disabled.resize(size, Image.LANCZOS))
+        on_dis_img = ImageTk.PhotoImage(
+            _on_disabled.resize(size, Image.LANCZOS))
         on_disabled_name = util.get_image_name(on_dis_img)
         self.theme_images[on_disabled_name] = on_dis_img
-
 
         return off_name, on_name, disabled_name, on_disabled_name
 
@@ -3021,9 +3032,12 @@ class StyleBuilderTTK:
         on_fill = prime_color
         off_fill = self.colors.bg
 
-        disabled_fg = Colors.make_transparent(0.3, self.colors.fg, self.colors.bg)  
-        off_border = Colors.make_transparent(0.4, self.colors.fg, self.colors.bg)
-        off_indicator = Colors.make_transparent(0.4, self.colors.fg, self.colors.bg)  
+        disabled_fg = Colors.make_transparent(
+            0.3, self.colors.fg, self.colors.bg)
+        off_border = Colors.make_transparent(
+            0.4, self.colors.fg, self.colors.bg)
+        off_indicator = Colors.make_transparent(
+            0.4, self.colors.fg, self.colors.bg)
 
         # override defaults for light and dark colors
         if colorname == LIGHT:
@@ -3076,9 +3090,10 @@ class StyleBuilderTTK:
         )
         draw.ellipse([20, 18, 112, 110], fill=disabled_fg)
         _on_disabled = _on_disabled.transpose(Image.ROTATE_180)
-        on_dis_img = ImageTk.PhotoImage(_on_disabled.resize(size, Image.LANCZOS))
+        on_dis_img = ImageTk.PhotoImage(
+            _on_disabled.resize(size, Image.LANCZOS))
         on_disabled_name = util.get_image_name(on_dis_img)
-        self.theme_images[on_disabled_name] = on_dis_img        
+        self.theme_images[on_disabled_name] = on_dis_img
 
         # toggle disabled
         _disabled = Image.new("RGBA", (226, 130))
@@ -3105,7 +3120,8 @@ class StyleBuilderTTK:
         """
         STYLE = "Round.Toggle"
 
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)  
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
 
         if any([colorname == DEFAULT, colorname == ""]):
             ttkstyle = STYLE
@@ -3193,7 +3209,8 @@ class StyleBuilderTTK:
 
         STYLE = "Square.Toggle"
 
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)  
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
 
         if any([colorname == DEFAULT, colorname == ""]):
             ttkstyle = STYLE
@@ -3285,8 +3302,10 @@ class StyleBuilderTTK:
         else:
             toggle_off = self.colors.selectbg
 
-        disabled_bg = Colors.make_transparent(0.10, self.colors.fg, self.colors.bg)
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)
+        disabled_bg = Colors.make_transparent(
+            0.10, self.colors.fg, self.colors.bg)
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
 
         self.style._build_configure(
             ttkstyle,
@@ -3347,7 +3366,8 @@ class StyleBuilderTTK:
         """
         STYLE = "Outline.Toolbutton"
 
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)   
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
 
         if any([colorname == DEFAULT, colorname == ""]):
             ttkstyle = STYLE
@@ -3493,7 +3513,8 @@ class StyleBuilderTTK:
         off_fill = self.colors.bg
         on_indicator = self.colors.selectfg
         size = self.scale_size([14, 14])
-        off_border = Colors.make_transparent(0.4, self.colors.fg, self.colors.bg)
+        off_border = Colors.make_transparent(
+            0.4, self.colors.fg, self.colors.bg)
         disabled = Colors.make_transparent(0.3, self.colors.fg, self.colors.bg)
 
         if self.is_light_theme:
@@ -3532,7 +3553,7 @@ class StyleBuilderTTK:
         draw.ellipse([40, 40, 94, 94], fill=off_fill)
         on_dis_img = ImageTk.PhotoImage(_on_dis.resize(size, Image.LANCZOS))
         on_disabled_name = util.get_image_name(on_dis_img)
-        self.theme_images[on_disabled_name] = on_dis_img        
+        self.theme_images[on_disabled_name] = on_dis_img
 
         # radio disabled
         _disabled = Image.new("RGBA", (134, 134))
@@ -3559,7 +3580,8 @@ class StyleBuilderTTK:
 
         STYLE = "TRadiobutton"
 
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
 
         if any([colorname == DEFAULT, colorname == ""]):
             ttkstyle = STYLE
@@ -4021,7 +4043,8 @@ class StyleBuilderTTK:
         """
         STYLE = "TCheckbutton"
 
-        disabled_fg = Colors.make_transparent(0.3, self.colors.fg, self.colors.bg)
+        disabled_fg = Colors.make_transparent(
+            0.3, self.colors.fg, self.colors.bg)
 
         if any([colorname == DEFAULT, colorname == ""]):
             colorname = PRIMARY
@@ -4113,18 +4136,18 @@ class StyleBuilderTTK:
                 font_offset = 10
             except:
                 try:
-                    # this should be available as a backup on Linux 
+                    # this should be available as a backup on Linux
                     # distros that don't have the FreeSerif.ttf file
                     fnt = ImageFont.truetype("DejaVuSans.ttf", 160)
                     font_offset = -15
                 except:
                     # If all else fails, use the default ImageFont
-                    # this won't actually show anything in practice 
-                    # because of how I'm scaling the image, but it 
-                    # will prevent the program from crashing. I need 
+                    # this won't actually show anything in practice
+                    # because of how I'm scaling the image, but it
+                    # will prevent the program from crashing. I need
                     # a better solution for a missing font
                     fnt = ImageFont.load_default()
-                    font_offset = 0        
+                    font_offset = 0
                     indicator = "x"
         else:
             # Mac OS font
@@ -4136,8 +4159,10 @@ class StyleBuilderTTK:
         on_fill = prime_color
         off_fill = self.colors.bg
         off_border = self.colors.selectbg
-        off_border = Colors.make_transparent(0.4, self.colors.fg, self.colors.bg)
-        disabled_fg = Colors.make_transparent(0.3, self.colors.fg, self.colors.bg)        
+        off_border = Colors.make_transparent(
+            0.4, self.colors.fg, self.colors.bg)
+        disabled_fg = Colors.make_transparent(
+            0.3, self.colors.fg, self.colors.bg)
 
         if colorname == LIGHT:
             check_color = self.colors.dark
@@ -4194,7 +4219,8 @@ class StyleBuilderTTK:
         )
 
         draw.text((20, font_offset), indicator, font=fnt, fill=off_fill)
-        on_dis_img = ImageTk.PhotoImage(checkbutton_on_disabled.resize(size, Image.LANCZOS))
+        on_dis_img = ImageTk.PhotoImage(
+            checkbutton_on_disabled.resize(size, Image.LANCZOS))
         on_dis_name = util.get_image_name(on_dis_img)
         self.theme_images[on_dis_name] = on_dis_img
 
@@ -4207,7 +4233,7 @@ class StyleBuilderTTK:
             fill=on_fill,
             outline=on_border,
             width=3,
-        )        
+        )
         draw.line([36, 67, 100, 67], fill=check_color, width=12)
         alt_img = ImageTk.PhotoImage(
             checkbutton_alt.resize(size, Image.LANCZOS)
@@ -4224,13 +4250,13 @@ class StyleBuilderTTK:
             fill=disabled_fg,
             outline=disabled_fg,
             width=3,
-        )        
+        )
         draw.line([36, 67, 100, 67], fill=off_fill, width=12)
         alt_dis_img = ImageTk.PhotoImage(
             checkbutton_alt_disabled.resize(size, Image.LANCZOS)
         )
         alt_dis_name = util.get_image_name(alt_dis_img)
-        self.theme_images[alt_dis_name] = alt_dis_img        
+        self.theme_images[alt_dis_name] = alt_dis_img
 
         # checkbutton disabled
         checkbutton_disabled = Image.new("RGBA", (134, 134))
@@ -4265,10 +4291,12 @@ class StyleBuilderTTK:
             ttkstyle = f"{colorname}.{STYLE}"
             background = self.colors.get(colorname)
 
-        disabled_bg = Colors.make_transparent(0.10, self.colors.fg, self.colors.bg)
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)
+        disabled_bg = Colors.make_transparent(
+            0.10, self.colors.fg, self.colors.bg)
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
         pressed = Colors.make_transparent(0.80, background, self.colors.bg)
-        hover = Colors.make_transparent(0.90, background, self.colors.bg)    
+        hover = Colors.make_transparent(0.90, background, self.colors.bg)
 
         self.style._build_configure(
             ttkstyle,
@@ -4323,7 +4351,8 @@ class StyleBuilderTTK:
         """
         STYLE = "Outline.TMenubutton"
 
-        disabled_fg = Colors.make_transparent(0.30, self.colors.fg, self.colors.bg)
+        disabled_fg = Colors.make_transparent(
+            0.30, self.colors.fg, self.colors.bg)
 
         if any([colorname == DEFAULT, colorname == ""]):
             ttkstyle = STYLE
@@ -4927,8 +4956,15 @@ class Bootstyle:
             else:
                 style = ""
 
+            classic = Style.get_instance()._mode_classic
+            if classic and style:
+                kwargs["style"] = style
+
             # instantiate the widget
             func(self, *args, **kwargs)
+
+            if classic:
+                return
 
             # must be called AFTER instantiation in order to use winfo_class
             #    in the `get_ttkstyle_name` method
@@ -5016,7 +5052,10 @@ class Bootstyle:
             str:
                 The ttkstyle or empty string if there is none.
         """
+
         style: Style = Style.get_instance() or Style()
+        if style._mode_classic:
+            return
 
         # get existing widget style if not provided
         if style_string is None:
@@ -5111,6 +5150,9 @@ class Bootstyle:
             widget (object):
                 The tcl/tk name given by `tkinter.Widget.winfo_name()`
         """
+        if Style.get_instance() and Style.get_instance()._mode_classic:
+            return
+
         try:
             style = Style.get_instance()
             method_name = Bootstyle.tkupdate_method_name(widget)
@@ -5146,6 +5188,9 @@ class Bootstyle:
 
             # instantiate the widget
             func(self, *args, **kwargs)
+
+            if Style.get_instance() and Style.get_instance()._mode_classic:
+                return
 
             if autostyle:
                 Publisher.subscribe(
